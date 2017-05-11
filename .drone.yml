@@ -1,0 +1,33 @@
+pipeline:
+  build:
+    image: orenge_web
+    commands:
+      - mix lint
+      - mix test
+
+services:
+  web:
+    build: .
+    image: orange_web
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/var/www
+    links:
+      - mysql:mysql
+    entrypoint: echo
+
+  mysql:
+    image: mysql:5.7.18
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    volumes_from:
+      - mysql_data
+
+  mysql_data:
+    image: busybox
+    volumes:
+      - /var/lib/mysql
+
